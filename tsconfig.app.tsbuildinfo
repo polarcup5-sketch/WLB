@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/storage.ts","./src/types.ts","./src/vite-env.d.ts","./src/components/SharedEvents.tsx","./src/components/TaskForm.tsx","./src/components/TaskList.tsx","./src/components/ThemeSelector.tsx","./src/lib/supabaseClient.ts","./src/utils/date.ts","./src/utils/datetime.ts"],"version":"5.9.3"}

@@ -1,141 +1,76 @@
 import { useEffect, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
-import { supabase } from "./supabaseClient";
+import "./index.css";
+import { supabase } from "./lib/supabaseClient";
+import SharedEvents from "./components/SharedEvents";
+import ThemeSelector from "./components/ThemeSelector";
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [sessionLoaded, setSessionLoaded] = useState(false);
-  const [status, setStatus] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState<string | null>(null);
+  const [fatal, setFatal] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (error) {
+        if (!mounted) return;
+        setFatal(error.message ?? String(error));
+      } else {
+        if (!mounted) return;
+        setEmail(data.session?.user?.email ?? null);
+      }
+      setLoading(false);
+    });
 
-    const init = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (!mounted) return;
-
-      if (error) setStatus(`Auth error: ${error.message}`);
-      setSession(data.session);
-      setSessionLoaded(true);
-    };
-
-    init();
-
-    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setSessionLoaded(true);
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setEmail(session?.user?.email ?? null);
+      setLoading(false);
     });
 
     return () => {
       mounted = false;
-      data.subscription.unsubscribe();
+      listener.subscription.unsubscribe();
     };
   }, []);
 
   const signInWithGoogle = async () => {
-    setStatus("");
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        // Works automatically on both localhost and Vercel
-        redirectTo: window.location.origin,
-      },
-    });
-
-    if (error) setStatus(`Auth error: ${error.message}`);
+    setFatal(null);
+    const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
+    if (error) setFatal(error.message);
   };
 
   const signOut = async () => {
-    setStatus("");
     const { error } = await supabase.auth.signOut();
-    if (error) setStatus(`Auth error: ${error.message}`);
+    if (error) setFatal(error.message);
+    else setEmail(null);
   };
 
-  if (!sessionLoaded) {
-    return <div style={{ padding: 24 }}>Loading…</div>;
-  }
-
-  // --- LOGIN (GOOGLE ONLY) ---
-  if (!session?.user) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 24,
-          background: "linear-gradient(180deg, #e9e4ff, #f7f6ff)",
-        }}
-      >
-        <div
-          style={{
-            width: 420,
-            maxWidth: "100%",
-            background: "#fff",
-            padding: 24,
-            borderRadius: 18,
-            boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
-            textAlign: "center",
-          }}
-        >
-          <h1 style={{ margin: 0, fontSize: 32 }}>Work Life Balancer</h1>
-          <p style={{ marginTop: 10, color: "#555", lineHeight: 1.4 }}>
-            Sign in with Google to use your shared lists.
-          </p>
-
-          <button
-            onClick={signInWithGoogle}
-            style={{
-              marginTop: 14,
-              width: "100%",
-              padding: "14px 16px",
-              borderRadius: 12,
-              border: "1px solid rgba(0,0,0,0.12)",
-              fontWeight: 800,
-              cursor: "pointer",
-              background: "#fff",
-            }}
-          >
-            Continue with Google
-          </button>
-
-          {status && (
-            <div style={{ marginTop: 14, color: "#c00", fontWeight: 600 }}>
-              {status}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // --- LOGGED IN: KEEP YOUR EXISTING APP UI BELOW ---
   return (
-    <div style={{ padding: 24 }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 12,
-          marginBottom: 24,
-        }}
-      >
-        <h2 style={{ margin: 0 }}>Work Life Balancer</h2>
-        <button onClick={signOut} style={{ padding: "10px 12px" }}>
-          Sign out
-        </button>
-      </div>
+    <div className="app-root">
+      <header className="app-header">
+        <h1>Work Life Balancer</h1>
+        <div className="header-controls">
+        <ThemeSelector />
 
-      {/* If your existing WLB app UI is in other components, render them here.
-          Replace the placeholder below with your original components (lists/tasks/calendar). */}
-      <div style={{ color: "#444" }}>
-        Logged in as <strong>{session.user.email}</strong>
-      </div>
+{loading ? null : email ? (
+  <>
+    <div className="small">Logged in as <b>{email}</b></div>
+    <button className="btn" onClick={signOut}>Sign out</button>
+  </>
+) : (
+  <button className="btn primary" onClick={signInWithGoogle}>Continue with Google</button>
+)}
+        </div>
+      </header>
 
-      {/* Example: <Dashboard /> or <Home /> */}
+      <main className="app-main">
+        {fatal && <div className="error">{fatal}</div>}
+        {loading ? <div className="center">Loading…</div> : <SharedEvents />}
+      </main>
+
+      <footer className="app-footer">
+        <small>Made with ❤ — shared calendar for you + your loved ones</small>
+      </footer>
     </div>
   );
 }
-

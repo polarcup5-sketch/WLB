@@ -1,111 +1,456 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/* =========================
+   WLB — Theme + UI Styles
+   Paste-ready index.css
+   ========================= */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
+/* Basic reset */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 body {
   margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* =========================
+   THEME TOKENS (semantic)
+   ========================= */
+:root {
+  /* background */
+  --bg: #f4f7fb;
+  --bg-bloom-1: rgba(79, 140, 255, 0.22);
+  --bg-bloom-2: rgba(60, 242, 198, 0.14);
+
+  /* surfaces */
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-border: rgba(0, 0, 0, 0.07);
+
+  /* text */
+  --text: rgba(12, 16, 28, 0.96);
+  --text2: rgba(24, 32, 52, 0.80);
+  --text3: rgba(50, 62, 88, 0.72);
+
+  /* accents */
+  --accent: #4f8cff;     /* cobalt */
+  --accent2: #3cf2c6;    /* mint */
+
+  /* controls */
+  --chip-bg: rgba(255, 255, 255, 0.72);
+  --chip-border: rgba(12, 16, 28, 0.10);
+
+  --input-bg: rgba(255, 255, 255, 0.86);
+  --input-border: rgba(12, 16, 28, 0.12);
+
+  /* shadows */
+  --shadow-lg: 0 28px 70px rgba(0,0,0,0.18);
+  --shadow-md: 0 14px 34px rgba(0,0,0,0.12);
+
+  /* misc */
+  --radius: 18px;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+/* Default theme if user hasn't chosen one */
+body:not([data-theme]) {
+  /* "cool-art" defaults already match :root, so nothing needed here */
+}
+
+/* =========================
+   THEMES (user selectable)
+   Set: document.body.dataset.theme = "dark-gallery" etc.
+   ========================= */
+
+/* A) Cool Art (default) */
+body[data-theme="cool-art"] {
+  --bg: #f4f7fb;
+  --bg-bloom-1: rgba(79, 140, 255, 0.22);
+  --bg-bloom-2: rgba(60, 242, 198, 0.14);
+
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-border: rgba(0, 0, 0, 0.07);
+
+  --text: rgba(12, 16, 28, 0.96);
+  --text2: rgba(24, 32, 52, 0.80);
+  --text3: rgba(50, 62, 88, 0.72);
+
+  --accent: #4f8cff;
+  --accent2: #3cf2c6;
+
+  --chip-bg: rgba(255, 255, 255, 0.72);
+  --chip-border: rgba(12, 16, 28, 0.10);
+
+  --input-bg: rgba(255, 255, 255, 0.86);
+  --input-border: rgba(12, 16, 28, 0.12);
+}
+
+/* B) Dark Gallery (moody, still readable) */
+body[data-theme="dark-gallery"] {
+  --bg: #070b14;
+  --bg-bloom-1: rgba(106, 162, 255, 0.18);
+  --bg-bloom-2: rgba(79, 255, 214, 0.10);
+
+  --card-bg: rgba(255, 255, 255, 0.10);
+  --card-border: rgba(255, 255, 255, 0.14);
+
+  --text: rgba(255, 255, 255, 0.92);
+  --text2: rgba(255, 255, 255, 0.74);
+  --text3: rgba(255, 255, 255, 0.56);
+
+  --accent: #6aa2ff;
+  --accent2: #4fffd6;
+
+  --chip-bg: rgba(255, 255, 255, 0.08);
+  --chip-border: rgba(255, 255, 255, 0.16);
+
+  --input-bg: rgba(0, 0, 0, 0.22);
+  --input-border: rgba(255, 255, 255, 0.16);
+}
+
+/* C) Gallery White (museum minimal) */
+body[data-theme="gallery-white"] {
+  --bg: #ffffff;
+  --bg-bloom-1: rgba(37, 99, 235, 0.10);
+  --bg-bloom-2: rgba(5, 150, 105, 0.08);
+
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --card-border: rgba(0, 0, 0, 0.08);
+
+  --text: rgba(17, 24, 39, 0.96);
+  --text2: rgba(55, 65, 81, 0.82);
+  --text3: rgba(107, 114, 128, 0.74);
+
+  --accent: #2563eb;
+  --accent2: #059669;
+
+  --chip-bg: rgba(255, 255, 255, 0.92);
+  --chip-border: rgba(0, 0, 0, 0.10);
+
+  --input-bg: rgba(255, 255, 255, 0.96);
+  --input-border: rgba(0, 0, 0, 0.12);
+}
+
+/* D) Pink–Purple Art (modern, soft, expressive) */
+body[data-theme="pink-purple"] {
+  --bg: #faf7ff;
+  --bg-bloom-1: rgba(167, 139, 250, 0.22); /* lavender */
+  --bg-bloom-2: rgba(236, 72, 153, 0.16);  /* rose */
+
+  --card-bg: rgba(255, 255, 255, 0.90);
+  --card-border: rgba(0, 0, 0, 0.06);
+
+  --text: rgba(24, 16, 44, 0.96);
+  --text2: rgba(64, 48, 104, 0.82);
+  --text3: rgba(96, 80, 140, 0.72);
+
+  --accent: #a78bfa;   /* purple */
+  --accent2: #ec4899;  /* pink */
+
+  --chip-bg: rgba(255, 255, 255, 0.75);
+  --chip-border: rgba(24, 16, 44, 0.12);
+
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --input-border: rgba(24, 16, 44, 0.14);
+}
+
+/* =========================
+   PAGE BACKGROUND + GRAIN
+   ========================= */
+body {
+  color: var(--text);
+  background:
+    radial-gradient(1000px 600px at 18% 10%, var(--bg-bloom-1), transparent 60%),
+    radial-gradient(900px 600px at 78% 18%, var(--bg-bloom-2), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg));
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: multiply;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 5px);
+}
+
+/* =========================
+   APP LAYOUT (your classnames)
+   ========================= */
+.wlbPage { padding: 18px; }
+
+.wlbLayout {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.wlbSidebar { width: 320px; flex: 0 0 320px; }
+.wlbMain { flex: 1; min-width: 0; }
+
+@media (max-width: 900px) {
+  .wlbLayout { flex-direction: column; }
+  .wlbSidebar { width: 100%; flex: 1; }
+}
+
+/* =========================
+   CARDS + HEADERS
+   ========================= */
+.wlbCard {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+.wlbCard::before {
+  content: "";
+  position: absolute;
+  inset: -2px -2px auto -2px;
+  height: 56px;
+  opacity: 0.55;
+  background: linear-gradient(90deg,
+    rgba(79,140,255,0.14),
+    rgba(60,242,198,0.10),
+    rgba(255,255,255,0)
+  );
+}
+
+.wlbHeader { margin-bottom: 12px; }
+.wlbTitle { font-size: 22px; font-weight: 900; letter-spacing: 0.2px; color: var(--text); }
+.wlbCardTitle { font-weight: 800; letter-spacing: 0.25px; color: var(--text2); margin-bottom: 10px; }
+
+/* =========================
+   CONTROLS
+   ========================= */
+.wlbRow { display: flex; gap: 10px; flex-wrap: wrap; }
+.wlbCol { display: flex; flex-direction: column; gap: 10px; }
+
+.wlbPill {
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 13px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+.wlbPill:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.wlbPill.active {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    color-mix(in srgb, var(--accent2) 12%, transparent)
+  );
+  font-weight: 900;
+}
+
+.wlbTypeBtn {
+  text-align: left;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 12px 12px;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+.wlbTypeBtn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.wlbTypeBtn.active {
+  border-color: color-mix(in srgb, var(--accent2) 55%, transparent);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--accent2) 16%, transparent),
+    color-mix(in srgb, var(--accent) 10%, transparent)
+  );
+  font-weight: 900;
+}
+
+/* =========================
+   TASK FORM
+   ========================= */
+.taskform {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.taskform input,
+.taskform select {
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 11px 12px;
+  outline: none;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.taskform input::placeholder { color: var(--text3); }
+
+.taskform input:focus,
+.taskform select:focus {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent), 0 16px 30px rgba(0,0,0,0.10);
+  transform: translateY(-1px);
+}
+
+.taskform input[type="datetime-local"] { min-width: 210px; }
+body[data-theme="dark-gallery"] .taskform input[type="datetime-local"],
+body[data-theme="cyber-cool"] .taskform input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+/* Buttons */
+.btn {
+  border: 0;
+  border-radius: 14px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-weight: 950;
+  letter-spacing: 0.2px;
+  color: rgba(6, 10, 18, 0.92);
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  box-shadow: 0 22px 50px rgba(0,0,0,0.16);
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+}
+.btn:hover { transform: translateY(-1px); filter: brightness(1.02); box-shadow: 0 26px 60px rgba(0,0,0,0.18); }
+.btn:active { transform: translateY(0); }
+
+.btn.disabled,
+.btn:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+
+/* =========================
+   EVENTS LIST
+   ========================= */
+.wlbList { list-style: none; padding: 0; margin: 0; }
+
+.wlbListItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 10px;
+  border-top: 1px solid color-mix(in srgb, var(--text3) 22%, transparent);
+  border-radius: 14px;
+  transition: transform 120ms ease, background 120ms ease;
+}
+.wlbListItem:first-child { border-top: none; }
+.wlbListItem:hover { background: rgba(255,255,255,0.45); transform: translateY(-1px); }
+
+body[data-theme="dark-gallery"] .wlbListItem:hover,
+body[data-theme="cyber-cool"] .wlbListItem:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.wlbCheckRow { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+.wlbEventTitle {
+  font-weight: 900;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wlbEventTitle.done { opacity: 0.55; text-decoration: line-through; text-decoration-thickness: 2px; }
+
+.wlbMeta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.wlbDate { font-size: 12px; color: var(--text2); }
+
+.wlbTag {
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.wlbEmpty { padding: 10px; color: var(--text2); }
+/* =========================
+   Theme Picker + Header
+   ========================= */
+
+   .app-root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+  
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(10px);
   }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
+  
+  .header-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .small {
+    color: var(--text2);
+  }
+  
+  /* Theme picker styling */
+  .themePicker {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 160px;
+  }
+  
+  .themeSelect {
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 8px 10px;
+    outline: none;
+  }
+  
+  .themeSelect:focus {
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  
+  .themeHint {
+    font-size: 11px;
+    color: var(--text3);
+  }
+  
+  /* Dark themes: make header readable */
+  body[data-theme="dark-gallery"] .app-header,
+  body[data-theme="cyber-cool"] .app-header {
+    background: rgba(0,0,0,0.22);
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+  }
+  
+  body[data-theme="dark-gallery"] .small,
+  body[data-theme="cyber-cool"] .small,
+  body[data-theme="dark-gallery"] .themeHint,
+  body[data-theme="cyber-cool"] .themeHint {
+    color: var(--text3);
+  }
+  
+  .app-main {
+    flex: 1;
+  }
+  
+  .app-footer {
+    padding: 14px 18px;
+    color: var(--text3);
+  }
+  
